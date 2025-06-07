@@ -78,7 +78,7 @@
                                 {{ $budget->category ? $budget->category->name : 'Overall Budget' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                                ${{ number_format($budget->amount, 2) }}
+                                {{app_currency()}}{{ number_format($budget->amount, 2) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
                                 {{ $budget->start_date->format('M d, Y') }}

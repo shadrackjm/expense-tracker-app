@@ -21,7 +21,10 @@ return new class extends Migration
                   ->constrained('categories')
                   ->onDelete('cascade'); // If a category is deleted, budgets for it are too
             $table->decimal('amount', 10, 2);
+            $table->string('source'); // e.g., 'salary', 'freelance', 'investment'
+            $table->date('income_date'); // Crucial for period-based income tracking
             $table->date('start_date');
+            $table->string('description')->nullable();
             $table->date('end_date');
             $table->timestamps();
         });

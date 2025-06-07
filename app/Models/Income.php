@@ -27,6 +27,9 @@ class Income extends Model
         'source',
         'description',
         'income_date',
+        'start_date',
+        'end_date',
+        
     ];
 
     /**
