@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
+use Masmerise\Toaster\Toaster;
 
 class ManageCategory extends Component
 {
@@ -98,7 +99,8 @@ class ManageCategory extends Component
             'description' => $this->description,
         ]);
 
-        session()->flash('success', 'Category added successfully!');
+        // session()->flash('success', 'Category added successfully!');
+        Toaster::success('Category added successfully!'); // Show success message
         $this->showCategoryModal = false; // Close modal
         $this->resetForm(); // Reset form for next entry
     }
@@ -134,7 +136,8 @@ class ManageCategory extends Component
                 'description' => $this->description,
             ]);
 
-            session()->flash('success', 'Category updated successfully!');
+            // session()->flash('success', 'Category updated successfully!');
+            Toaster::success('Category updated successfully!'); // Show success message
             $this->showCategoryModal = false;
             $this->resetForm();
         }
@@ -155,7 +158,8 @@ class ManageCategory extends Component
         // We'll catch the integrity constraint violation and show a user-friendly message.
         try {
             $category->delete();
-            session()->flash('success', 'Category deleted successfully!');
+            // session()->flash('success', 'Category deleted successfully!');
+            Toaster::success('Category deleted successfully!'); // Show success message
         } catch (\Illuminate\Database\QueryException $e) {
             if ($e->getCode() === '23000') { // SQLSTATE for Integrity constraint violation
                 session()->flash('error', 'Cannot delete category: It is currently linked to expenses, budgets, or recurring transactions. Please update or delete those first.');

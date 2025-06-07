@@ -4,7 +4,7 @@
         <h2 class="text-2xl font-bold text-gray-800 dark:text-neutral-200 mb-6">Manage Categories</h2>
 
         <!-- Success/Error Message Display -->
-        @if (session()->has('success'))
+        {{-- @if (session()->has('success'))
             <div class="bg-green-100 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-4 dark:bg-green-800/30 dark:border-green-900 dark:text-green-500"
                 role="alert">
                 {{ session('success') }}
@@ -15,7 +15,7 @@
                 role="alert">
                 {{ session('error') }}
             </div>
-        @endif
+        @endif --}}
 
         <!-- Header with Add Button, Search, and Filter -->
         <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
