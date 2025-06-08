@@ -21,7 +21,7 @@
                     </div>
                     <div class="mt-1 flex items-center gap-x-2">
                         <h3 class="text-xl sm:text-2xl font-medium text-gray-800 dark:text-neutral-200">
-                            {{ app_currency() }}{{ number_format($totalExpenses, 2) }}
+                            {{ app_currency() }}{{ Number::abbreviate($this->totalExpenses) ?: 0 }}
                         </h3>
                         <!-- You can add a percentage change here if you implement comparison logic in Livewire -->
                         <!-- <span class="inline-flex items-center gap-x-1 py-0.5 px-2 rounded-full bg-red-100 text-red-900 dark:bg-red-800 dark:text-red-100">
@@ -54,7 +54,7 @@
                     </div>
                     <div class="mt-1 flex items-center gap-x-2">
                         <h3 class="text-xl font-medium text-gray-800 dark:text-neutral-200">
-                           {{ app_currency() }}{{ number_format($totalIncome, 2) }}
+                           {{ app_currency() }}{{ Number::abbreviate($totalIncome) }}
                         </h3>
                     </div>
                 </div>
@@ -78,7 +78,7 @@
                     </div>
                     <div class="mt-1 flex items-center gap-x-2">
                         <h3 class="text-xl sm:text-2xl font-medium @if($netBalance >= 0) text-green-600 @else text-red-600 @endif dark:text-neutral-200">
-                           {{ app_currency() }}{{ number_format($netBalance, 2) }}
+                           {{ app_currency() }}{{$netBalance }}
                         </h3>
                     </div>
                 </div>

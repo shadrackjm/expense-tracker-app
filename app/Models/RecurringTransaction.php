@@ -9,12 +9,14 @@ class RecurringTransaction extends Model
     protected $fillable = [
         'user_id',
         'amount',
+        'type', // 'expense' or 'income'
         'frequency',
         'start_date',
         'end_date',
         'description',
         'category_id',
         'payment_method_id',
+        'next_occurrence_date',
     ];
 
     /**

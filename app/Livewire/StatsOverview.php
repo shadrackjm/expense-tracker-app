@@ -7,6 +7,7 @@ use App\Models\Expense;
 use App\Models\Income;
 use App\Models\RecurringTransaction;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Number;
 
 class StatsOverview extends Component
 {
@@ -41,13 +42,17 @@ class StatsOverview extends Component
                                           ->whereBetween('expense_date', [$currentMonthStart, $currentMonthEnd])
                                           ->sum('amount');
 
+           
+
             // Calculate total income for the current month
             $this->totalIncome = Income::where('user_id', $userId)
                                        ->whereBetween('income_date', [$currentMonthStart, $currentMonthEnd])
                                        ->sum('amount');
+            
 
             // Calculate net balance
             $this->netBalance = $this->totalIncome - $this->totalExpenses;
+            $this->netBalance = Number::abbreviate($this->netBalance) ?: 0; // Ensure it's at least 0
 
             // Count total active recurring transactions
             $this->totalRecurringTransactions = RecurringTransaction::where('user_id', $userId)

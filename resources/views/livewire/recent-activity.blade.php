@@ -103,7 +103,7 @@
                                     {{ $transaction->description ?: ($transaction->category->name ?? 'Recurring Item') }}
                                 </p>
                                 <p class="text-xs text-gray-500 dark:text-neutral-400">
-                                    {{ $transaction->next_occurrence_date->format('M d, Y') }} &bull; {{ ucfirst($transaction->type) }} ({{ ucfirst($transaction->frequency) }})
+                                    {{ date('M d, Y', strtotime($transaction->next_occurrence_date)) }} &bull; {{ ucfirst($transaction->type) }} ({{ ucfirst($transaction->frequency) }})
                                 </p>
                             </div>
                             <p class="text-sm font-semibold @if($transaction->type === 'expense') text-red-600 @else text-green-600 @endif">
