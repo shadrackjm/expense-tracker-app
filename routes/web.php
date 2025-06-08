@@ -30,6 +30,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/expenses', ManageExpense::class)->name('expenses.manage');
     Route::get('/reccuring-transactions', ManageRecurringTransactions::class)->name('recurring-transactions.manage');
     Route::get('/settings-page', SettingsPage::class)->name('settings.page');
+    Route::get('/financial-reports', \App\Livewire\FinancialReports::class)->name('financial.reports');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');

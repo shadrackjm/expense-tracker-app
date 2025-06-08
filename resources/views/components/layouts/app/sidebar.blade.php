@@ -22,6 +22,9 @@
                     <flux:navlist.item icon="banknotes" :href="route('recurring-transactions.manage')" :current="request()->routeIs('recurring-transactions.manage')" wire:navigate>{{ __('Reccuring Transactions') }}</flux:navlist.item>
                     <flux:navlist.item icon="cog-8-tooth" :href="route('settings.page')" :current="request()->routeIs('settings.page')" wire:navigate>{{ __('System Settings') }}</flux:navlist.item>
                 </flux:navlist.group>
+                <flux:navlist.group :heading="__('Reports')" class="grid">
+                    <flux:navlist.item icon="chart-bar" :href="route('financial.reports')" :current="request()->routeIs('financial.reports')" wire:navigate>{{ __('Financial Report') }}</flux:navlist.item>
+                </flux:navlist.group>
                 
             </flux:navlist>
 
