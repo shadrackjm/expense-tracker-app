@@ -2,13 +2,14 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
-use App\Models\Expense;
-use App\Models\Income;
-use App\Models\Category;
-use App\Models\Budget;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Models\Budget;
+use App\Models\Income;
+use App\Models\Expense;
+use Livewire\Component;
+use App\Models\Category;
+use Flowframe\Trend\Trend;
+use Illuminate\Support\Facades\Auth;
 
 class FinancialReports extends Component
 {
@@ -191,11 +192,11 @@ class FinancialReports extends Component
     {
         $userId = Auth::id();
 
-        // Initialize monthly data as a collection of arrays
-        $monthlyData = collect();
+        // Initialize monthly data for table display
+        $monthlyTableData = collect();
         for ($i = 1; $i <= 12; $i++) {
             $monthName = Carbon::createFromDate(null, $i, 1)->format('F');
-            $monthlyData->put($i, [
+            $monthlyTableData->put($i, [
                 'month_name' => $monthName,
                 'total_income' => 0,
                 'total_expenses' => 0,
@@ -203,39 +204,57 @@ class FinancialReports extends Component
             ]);
         }
 
-        // Fetch income for the year
-        $incomeRecords = Income::where('user_id', $userId)
-            ->whereYear('income_date', $year)
-            ->get();
+        // Use Laravel Trend for income data
+        $incomeTrend = Trend::query(Income::query()->where('user_id', $userId))
+            ->between(
+                Carbon::createFromDate($year, 1, 1)->startOfYear(),
+                Carbon::createFromDate($year, 12, 31)->endOfYear()
+            )
+            ->perMonth()
+            ->sum('amount');
 
-        foreach ($incomeRecords as $income) {
-            $month = $income->income_date->month;
-            // Retrieve, modify, and put back the array for the specific month
-            $monthData = $monthlyData->get($month);
-            $monthData['total_income'] += $income->amount;
-            $monthlyData->put($month, $monthData);
+        // Use Laravel Trend for expense data
+        $expenseTrend = Trend::query(Expense::query()->where('user_id', $userId))
+            ->between(
+                Carbon::createFromDate($year, 1, 1)->startOfYear(),
+                Carbon::createFromDate($year, 12, 31)->endOfYear()
+            )
+            ->perMonth()
+            ->sum('amount');
+
+        // Prepare data for table and chart
+        $chartLabels = [];
+        $chartIncomeData = [];
+        $chartExpenseData = [];
+        $chartNetBalanceData = [];
+
+        for ($i = 1; $i <= 12; $i++) {
+            $monthName = Carbon::createFromDate(null, $i, 1)->format('F');
+            $chartLabels[] = $monthName;
+
+            $incomeAmount = $incomeTrend->firstWhere('date', Carbon::createFromDate($year, $i, 1)->format('Y-m-d'))['aggregate'] ?? 0;
+            $expenseAmount = $expenseTrend->firstWhere('date', Carbon::createFromDate($year, $i, 1)->format('Y-m-d'))['aggregate'] ?? 0;
+            $netBalance = $incomeAmount - $expenseAmount;
+
+            $chartIncomeData[] = $incomeAmount;
+            $chartExpenseData[] = $expenseAmount;
+            $chartNetBalanceData[] = $netBalance;
+
+            // Update monthly table data
+            $monthTableEntry = $monthlyTableData->get($i);
+            $monthTableEntry['total_income'] = $incomeAmount;
+            $monthTableEntry['total_expenses'] = $expenseAmount;
+            $monthTableEntry['net_balance'] = $netBalance;
+            $monthlyTableData->put($i, $monthTableEntry);
         }
 
-        // Fetch expenses for the year
-        $expenseRecords = Expense::where('user_id', $userId)
-            ->whereYear('expense_date', $year)
-            ->get();
-
-        foreach ($expenseRecords as $expense) {
-            $month = $expense->expense_date->month;
-            // Retrieve, modify, and put back the array for the specific month
-            $monthData = $monthlyData->get($month);
-            $monthData['total_expenses'] += $expense->amount;
-            $monthlyData->put($month, $monthData);
-        }
-
-        // Calculate net balance for each month
-        $this->incomeExpenseTrend['data'] = $monthlyData->map(function ($data) {
-            $data['net_balance'] = $data['total_income'] - $data['total_expenses'];
-            return $data;
-        })->values()->all();
-
+        // Store all trend data for both table and chart
+        $this->incomeExpenseTrend['data'] = $monthlyTableData->values()->all();
         $this->incomeExpenseTrend['report_year'] = $year;
+        $this->incomeExpenseTrend['chartLabels'] = $chartLabels;
+        $this->incomeExpenseTrend['chartIncomeData'] = $chartIncomeData;
+        $this->incomeExpenseTrend['chartExpenseData'] = $chartExpenseData;
+        $this->incomeExpenseTrend['chartNetBalanceData'] = $chartNetBalanceData;
     }
 
     /**
